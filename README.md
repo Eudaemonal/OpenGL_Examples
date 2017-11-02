@@ -8,6 +8,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
+Require library: 
 GL
 GLUT
 GLFW
@@ -16,7 +17,8 @@ GLM
 
 
 ```
-Give examples
+
+
 ```
 
 ### Installing
@@ -41,15 +43,18 @@ End with an example of getting some data out of the system or using it for a lit
 
 Explain how to run the automated tests for this system
 
-### Break down into end to end tests
+### Compling
 
-Explain what these tests test and why
+Compile the test file with Makefile
 
 ```
-Give an example
+LIB=-lGL -lGLU -lglut -lglfw -lGLEW
+CLASS=../common/shader.cpp ../common/texture.cpp ../common/controls.cpp ../common/tangentspace.cpp ../common/vboindexer.cpp ../common/objloader.cpp
+test:test.cpp $(CLASS)
+    g++ test.cpp $(CLASS) $(LIB) $(INC) -o test
 ```
 
-### And coding style tests
+### Running
 
 Explain what these tests test and why
 
