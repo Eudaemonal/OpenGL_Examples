@@ -1,32 +1,29 @@
 #include <iostream>
+#include <utility>
 #include <GL/glut.h>
 
 
 class Demo{
 public:
     Demo() 
-        : title("Demo")
+        : Title("")
         , xRotated(0.0)
         , yRotated(0.0)
         , zRotated(0.0)
     {}
-
 
     Demo(std::string _title)
-        : title(_title)
+        : Title(_title)
         , xRotated(0.0)
         , yRotated(0.0)
         , zRotated(0.0)
     {}
-
-
 
     void init(void) {
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
         
         glClearColor(0.0,0.0,0.0,0.0);
     }
-
 
     void display(void) {
         glMatrixMode(GL_MODELVIEW);
@@ -38,15 +35,15 @@ public:
         // set position -5
         glTranslatef(0.0,0.0,-5.0);
     
-        // Red color used to draw.
-        glColor3f(0.8, 0.2, 0.1); 
-    
         glRotatef(xRotated,1.0,0.0,0.0);
         glRotatef(yRotated,0.0,1.0,0.0);
         glRotatef(zRotated,0.0,0.0,1.0);
         
         glScalef(1.0,1.0,1.0);
         
+        
+        // Red color used to draw.
+        glColor3f(0.8, 0.2, 0.1); 
         glutSolidTeapot(1);
      
         glFlush();        
@@ -55,23 +52,37 @@ public:
 
     // Called when the window is resized
     void reshape(int x, int y) {
-    if (y == 0 || x == 0) return;  //Nothing is visible then, so return
-    //Set a new projection matrix
-    glMatrixMode(GL_PROJECTION);  
-    glLoadIdentity();
-    //Angle of view:40 degrees
-    //Near clipping plane distance: 0.5
-    //Far clipping plane distance: 20.0
-     
-    gluPerspective(40.0,(GLdouble)x/(GLdouble)y,0.5,20.0);
+        if (y == 0 || x == 0) return;  //Nothing is visible then, so return
+        //Set a new projection matrix
+        glMatrixMode(GL_PROJECTION);  
+        glLoadIdentity();
+    
+        gluPerspective(CameraFovy,(GLdouble)x/(GLdouble)y,CameraNearPlane,CameraFarPlane);
  
-    glViewport(0,0,x,y);  //Use the whole window for rendering
+        glViewport(0,0,x,y);  //Use the whole window for rendering
     }
 
     void idle(){
         yRotated += 0.01;
      
         display();
+    }
+
+    // mouse passive move event
+    void move(int x, int y) {
+        MousePoint = std::make_pair(x, y);
+    }
+
+    // mouse drag event
+    void drag(int x, int y) {
+        std::pair<int, int> point = std::make_pair(x, y);
+        int dx = point.first - MousePoint.first;
+        int dy = point.second - MousePoint.second;
+
+        xRotated += dy * RotationScale;
+        yRotated += dx * RotationScale;
+
+        MousePoint = point;
     }
 
 
@@ -101,17 +112,29 @@ public:
 
 
 private:
-    std::string title;
+    std::string Title;
 
     double xRotated;
     double yRotated;
     double zRotated;
+    
+    double CameraFovy = 60.0;
+    double CameraNearPlane = 0.5;
+    double CameraFarPlane = 100.0;
+
+    std::pair<int, int> MousePoint;
+    double RotationScale = 1;
 };
 
 
 
 // Init global object
-Demo g("Demo");
+std::string Title = "Demo";
+int Width = 800;
+int Height = 600;
+Demo g(Title);
+
+
 
 // Wrapper for class members
 void initRendering(){
@@ -128,6 +151,14 @@ void resizeWindow(int w, int h){
 
 void idleFunc(void){
     g.idle();
+}
+
+void mouseMove(int x, int y){
+    g.move(x, y);
+}
+
+void mouseDrag(int x, int y){
+    g.drag(x, y);
 }
 
 void KeyboardFunc(unsigned char key, int x, int y){
@@ -147,10 +178,10 @@ int main(int argc, char *argv[]){
         // double buffer
         glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB );
 
-        // Window position (from top corner), and size (width% and hieght)
-        glutInitWindowPosition( 10, 60 );
-        glutInitWindowSize(360, 360);
-        glutCreateWindow("Basic");
+        // Window position (from top corner), and size (width and hieght)
+        glutInitWindowPosition( 0, 0 );
+        glutInitWindowSize(Width, Height);
+        glutCreateWindow(Title.c_str());
 
         initRendering();
 
@@ -158,11 +189,17 @@ int main(int argc, char *argv[]){
         glutKeyboardFunc( KeyboardFunc );  // normal ascii symbols
         glutSpecialFunc( SpecialKeyFunc ); // special keys
 
-        // resize the window
+        // Resize the window
         glutReshapeFunc( resizeWindow );
 
-        // background process
+        // Background process
         glutIdleFunc(idleFunc);
+
+        // Mouse passive move
+        glutPassiveMotionFunc(mouseMove);
+        
+        // Mouse drag
+        glutMotionFunc(mouseDrag);
 
         // Redraw the window
         glutDisplayFunc( drawScene );
