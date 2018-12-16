@@ -8,7 +8,9 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-* Require library: 
+* Require CMake
+
+* Require OpenGL library: 
 GL, GLUT, GLFW, GLEW, GLM  
 
 * Install the essential packages:  
@@ -18,6 +20,8 @@ GL, GLUT, GLFW, GLEW, GLM
 ```sudo apt-get install libglfw-dev```  
 ```sudo apt-get install libglfw3-dev```  
 ```sudo apt-get install libglm-dev```   
+```sudo apt-get install libxmu-dev```
+
 
 * The files will be installed under:   
 ```/usr/include/GL```   
