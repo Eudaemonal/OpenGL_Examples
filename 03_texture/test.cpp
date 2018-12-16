@@ -13,8 +13,8 @@ GLFWwindow* window;
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
 
-#include "../src/shader.hpp"
-#include "../src/texture.hpp"
+#include "shader.hpp"
+#include "texture.hpp"
 
 int main( void )
 {
