@@ -3,7 +3,7 @@
 #include <GL/glut.h>
 
 #include <demo.hpp>
-
+#include <terrain.hpp>
 // Init global object
 std::string Title = "Demo";
 int Width = 800;
