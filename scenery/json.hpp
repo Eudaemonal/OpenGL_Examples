@@ -8,25 +8,23 @@
 #include <typeinfo>
 
 #include "rapidjson/stringbuffer.h"
-#include "rapidjson/document.h"
+#include "rapidjson/prettywriter.h"
 #include "rapidjson/writer.h"
+#include "rapidjson/filereadstream.h"
+#include "rapidjson/document.h"
 
-
-class toJson
-{
+class toJson{
 private:
-rapidjson::StringBuffer strBuf;
-rapidjson::Writer<rapidjson::StringBuffer> writer;
+    rapidjson::StringBuffer strBuf;
+    rapidjson::Writer<rapidjson::StringBuffer> writer;
 
 
 public:
+    toJson()
+        : writer(strBuf)
+    {}
 
-toJson()
-:writer(strBuf)
-{}
-
-void setWriter(rapidjson::StringBuffer strBuf)
-{
+void setWriter(rapidjson::StringBuffer strBuf){
     writer.Reset(strBuf);
 }
 

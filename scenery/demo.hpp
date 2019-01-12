@@ -1,21 +1,60 @@
 #ifndef DEMO_HPP
 #define DEMO_HPP
 
-#include <terrain.hpp>
-#include <light.hpp>
+#include "options.hpp"
+#include "terrain.hpp"
+#include "light.hpp"
+#include "json.hpp"
+
 
 class Demo{
 public:
-    Demo(std::string _title)
-        : Title(_title)
+    Demo()
+        : Name("")
         , xRotated(0.0)
         , yRotated(0.0)
         , zRotated(0.0)
     {
-        terrain = new Terrain(6, 6);
-        light = new Light(0.6, 0.9, 0.8);
+        terrain = new Terrain;
+        light = new Light(0.5, 0.9, 0.8);
     }
 
+    // Configure settings
+    void load(Options& options){
+        // read map configuration
+        int w, d;
+        const int size = 2048;
+        char *buffer;
+        rapidjson::Document conf;
+        if(!std::ifstream(options.map.c_str())){
+            std::cerr << "Map does not exist\n";
+            exit(0);
+        }
+        FILE *fp = fopen(options.map.c_str(), "r");
+        buffer = new char[size];
+        rapidjson::FileReadStream is(fp,buffer,size);
+        conf.ParseStream<0>(is);        
+        if(conf.HasParseError()){                                           
+            std::cerr << "map file error\n";
+            exit(0);
+        }
+
+        rapidjson::Value& width = conf["width"];
+        rapidjson::Value& depth = conf["depth"];
+        rapidjson::Value& altitude = conf["altitude"];
+
+        w = width.GetInt();
+        d = depth.GetInt();
+        std::vector<std::vector<double>> altitudes(d, std::vector<double>(w));
+        for(int i = 0; i < d; ++i){
+            for(int j = 0; j < w; ++j){
+                altitudes[i][j] = altitude[i*w + j].GetDouble();
+            }
+        }
+        // load terrain altitudes
+        terrain->load(altitudes);       
+
+    }
 
 
     void init(void) {
@@ -38,8 +77,8 @@ public:
         // clear the identity matrix.
         glLoadIdentity();
     
-        // set position -5
-        glTranslatef(0.0,0.0,-5.0);
+        // set position -10
+        glTranslatef(0.0,0.0,-10.0);
     
         glRotatef(xRotated,1.0,0.0,0.0);
         glRotatef(yRotated,0.0,1.0,0.0);
@@ -116,7 +155,7 @@ public:
 
 private:
     // Basic Universal parameters
-    std::string Title;
+    std::string Name;
 
     double xRotated;
     double yRotated;

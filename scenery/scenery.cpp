@@ -1,15 +1,56 @@
 #include <iostream>
+#include <fstream>
 #include <utility>
+#include <string>
 #include <GL/glut.h>
 #include <boost/program_options.hpp>
 #include "demo.hpp"
 #include "json.hpp"
+#include "options.hpp"
+
+class ConfigGenerator{
+private:
+    const int size = 2048;
+    char *buffer;
+    rapidjson::Document conf;
+
+public:
+    ConfigGenerator(std::string filename, Options& option){
+        if(!std::ifstream(filename.c_str())){
+            std::cerr << "Config file does not exist\n";
+            exit(0);
+        }
+        FILE *fp = fopen(filename.c_str(), "r");
+        buffer = new char[size];
+        rapidjson::FileReadStream is(fp,buffer,size);
+        conf.ParseStream<0>(is);        
+        if(conf.HasParseError()){                                           
+            std::cerr << "Configfile error\n";
+            exit(0);
+        }
+
+        rapidjson::Value& name = conf["name"];
+        rapidjson::Value& screen = conf["screen"];
+        rapidjson::Value& map = conf["map"];
+        
+        rapidjson::Value& screen_width = screen["width"];
+        rapidjson::Value& screen_height = screen["height"];
+
+        option.configfile = filename;
+        option.name = name.GetString();
+        option.screen_width = screen_width.GetInt();
+        option.screen_height = screen_height.GetInt();
+        option.map = map.GetString();
+    }
+
+    ~ConfigGenerator(){
+        delete buffer;
+    }
+};
 
 // Init global object
-std::string Title = "Scenery";
-int Width = 800;
-int Height = 600;
-Demo g(Title);
+Options options;
+Demo g;
 
 // Wrapper for class members
 void initRendering(){
@@ -67,6 +108,13 @@ int main(int argc, char *argv[]){
             std::cout << "Config: " << configure << '\n';
         }
 
+        // load json file
+        ConfigGenerator(configure, options);
+
+        // load demo options
+        g.load(options);
+
+
         // init glut
         glutInit(&argc,argv);
 
@@ -75,8 +123,8 @@ int main(int argc, char *argv[]){
 
         // Window position (from top corner), and size (width and hieght)
         glutInitWindowPosition( 0, 0 );
-        glutInitWindowSize(Width, Height);
-        glutCreateWindow(Title.c_str());
+        glutInitWindowSize(options.screen_width, options.screen_width);
+        glutCreateWindow(options.name.c_str());
 
         initRendering();
 

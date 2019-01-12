@@ -28,14 +28,14 @@ public:
         glLightfv(GL_LIGHT0, GL_POSITION, location);
 
         glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-        glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR); 
+        //glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR); 
     }
 
 private:
     float ambient;
     float diffuse;
     float specular;
-    float location[3] = {0,10,0};
+    float location[3] = {10,10,10};
 
 };
 
