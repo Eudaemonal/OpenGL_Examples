@@ -1,0 +1,9 @@
+{
+    "name": "Scenery",
+    "screen": {
+        "width": 800,
+        "height": 600
+    },
+    "map": "maps/terrain01.json"
+    
+}

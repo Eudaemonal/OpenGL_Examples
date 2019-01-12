@@ -12,6 +12,5 @@ include_directories( ${OPENGL_INCLUDE_DIRS} )
 include_directories( ${GLUT_INCLUDE_DIRS} )
 include_directories( ${Boost_INCLUDE_DIRS})
 
-
 add_executable(scenery scenery.cpp )
-target_link_libraries( scenery ${OPENGL_LIBRARY} ${GLUT_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries( scenery ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${Boost_LIBRARIES})

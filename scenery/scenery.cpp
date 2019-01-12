@@ -2,8 +2,8 @@
 #include <utility>
 #include <GL/glut.h>
 #include <boost/program_options.hpp>
-#include <demo.hpp>
-
+#include "demo.hpp"
+#include "json.hpp"
 
 // Init global object
 std::string Title = "Scenery";
@@ -47,24 +47,25 @@ void SpecialKeyFunc(int key, int x, int y){
 // main
 int main(int argc, char *argv[]){
     try{
+        // config file path
         std::string configure;
         namespace po = boost::program_options;
         po::options_description desc{"Options"};
-/*
         desc.add_options()
             ( "help,h", "Help screen")
-            ( "config,c", po::value( &configure ), "Configuration file" );
+            ( "config,c", po::value( &configure ), "Configuration file path" );
         
         po::variables_map vm;
         po::store(parse_command_line(argc, argv, desc), vm);
         po::notify(vm);
 
-        if (vm.count("help"))
+        if (vm.count("help")){
             std::cout << desc << '\n';
-        else if (vm.count("config"))
+            exit(0);
+        }
+        else if (vm.count("config")){
             std::cout << "Config: " << configure << '\n';
-*/
-
+        }
 
         // init glut
         glutInit(&argc,argv);
