@@ -1,16 +1,15 @@
 #include <iostream>
 #include <utility>
 #include <GL/glut.h>
-
+#include <boost/program_options.hpp>
 #include <demo.hpp>
-#include <terrain.hpp>
+
+
 // Init global object
-std::string Title = "Demo";
+std::string Title = "Scenery";
 int Width = 800;
 int Height = 600;
 Demo g(Title);
-
-
 
 // Wrapper for class members
 void initRendering(){
@@ -48,6 +47,25 @@ void SpecialKeyFunc(int key, int x, int y){
 // main
 int main(int argc, char *argv[]){
     try{
+        std::string configure;
+        namespace po = boost::program_options;
+        po::options_description desc{"Options"};
+/*
+        desc.add_options()
+            ( "help,h", "Help screen")
+            ( "config,c", po::value( &configure ), "Configuration file" );
+        
+        po::variables_map vm;
+        po::store(parse_command_line(argc, argv, desc), vm);
+        po::notify(vm);
+
+        if (vm.count("help"))
+            std::cout << desc << '\n';
+        else if (vm.count("config"))
+            std::cout << "Config: " << configure << '\n';
+*/
+
+
         // init glut
         glutInit(&argc,argv);
 

@@ -1,23 +1,34 @@
+#ifndef DEMO_HPP
+#define DEMO_HPP
+
+#include <terrain.hpp>
+#include <light.hpp>
+
 class Demo{
 public:
-    Demo() 
-        : Title("")
-        , xRotated(0.0)
-        , yRotated(0.0)
-        , zRotated(0.0)
-    {}
-
     Demo(std::string _title)
         : Title(_title)
         , xRotated(0.0)
         , yRotated(0.0)
         , zRotated(0.0)
-    {}
+    {
+        terrain = new Terrain(6, 6);
+        light = new Light(0.6, 0.9, 0.8);
+    }
+
+
 
     void init(void) {
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
         
-        glClearColor(0.0,0.0,0.0,0.0);
+        glClearColor(0.8f, 0.8f, 0.8f, 0.0f);
+        
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_NORMALIZE);
+
+        // init lighting
+        light->init();
+
     }
 
     void display(void) {
@@ -35,11 +46,10 @@ public:
         glRotatef(zRotated,0.0,0.0,1.0);
         
         glScalef(1.0,1.0,1.0);
-        
-        
-        // Red color used to draw.
-        glColor3f(0.8, 0.2, 0.1); 
-        glutSolidTeapot(1);
+        // Start drawing
+        light->set();
+        terrain->draw();
+            
      
         glFlush();        
     }
@@ -58,8 +68,6 @@ public:
     }
 
     void idle(){
-        yRotated += 0.01;
-     
         display();
     }
 
@@ -107,6 +115,7 @@ public:
 
 
 private:
+    // Basic Universal parameters
     std::string Title;
 
     double xRotated;
@@ -119,5 +128,11 @@ private:
 
     std::pair<int, int> MousePoint;
     double RotationScale = 1;
+
+    // User defined Scenery parameters
+    Terrain *terrain;
+    Light *light;
+
 };
 
+#endif
